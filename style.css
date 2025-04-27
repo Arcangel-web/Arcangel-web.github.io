@@ -28,6 +28,12 @@
     font-size: 30px;
 }
 
+#biodata {
+    background: red;
+    width: 500px;
+    height: 500px;
+}
+
 .li-navbar:hover {
     background-color: aquamarine;
     transition: .5s ease-in-out;
