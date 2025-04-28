@@ -28,11 +28,11 @@
     font-size: 30px;
 }
 
-#biodata {
+/* #biodata {
     background: red;
     width: 500px;
     height: 500px;
-}
+} */
 
 .li-navbar:hover {
     background-color: aquamarine;
