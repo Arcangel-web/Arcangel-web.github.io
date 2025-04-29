@@ -15,7 +15,7 @@
 
 .ul-navbar {
     display: flex;
-    height: 100px;
+    height: 75px;
     justify-content: center;
     align-items: center;
 }
@@ -25,7 +25,7 @@
     padding: 20px;
     margin: 5px;
     color: white;
-    font-size: 30px;
+    font-size: 25px;
 }
 
 /* #biodata {
@@ -136,6 +136,6 @@ section .content-container .circle:nth-child(2) span::before {
 }
 
 .footer-h1 {
-    font-size: 40px;
+    font-size: 25px;
     color: white;
 }
