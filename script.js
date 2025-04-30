@@ -139,46 +139,63 @@ const countBrackets = input => {
 
 //function to handle percentage calculations
 const calculatePercentage = input => {
-    let processedInput = "",
-        numberBuffer = "";
-    const bracketsState = [];
-    
+    // This function will handle percentages including those applied to parenthesized expressions
+    let processedInput = "";
+    let numberBuffer = "";
+    let expressionBuffer = "";
+    let insideParentheses = false;
+    let parenthesesCount = 0;
+
     for (let i = 0; i < input.length; i++) {
         const char = input[i];
 
-        if (!isNaN(char) || char === ".") numberBuffer += char;
-        else if (char === "%") {
-            const percentValue = parseFloat(numberBuffer) / 100,
-                prevOperator = i > 0 ? input[i - numberBuffer.length - 1] : "",
-                nextOperator = i + 1 < input.length && operators.includes(input[i + 1]) ? input[i + 1] : "";
-            
-            if (!prevOperator || prevOperator === "÷" || prevOperator === "×" || prevOperator === "(") processedInput += percentValue;
-            else if (prevOperator === "-" || prevOperator === "+") {
-                if (nextOperator === "÷" || nextOperator === "×") processedInput += percentValue;
-                else processedInput += "(" + processedInput.slice(0, -1) + ")*" + percentValue; 
+        if (char === "(") {
+            if (!insideParentheses) {
+                insideParentheses = true;
+                parenthesesCount = 1;
+                expressionBuffer = char;
+            } else {
+                parenthesesCount++;
+                expressionBuffer += char;
+            }
+        } else if (char === ")") {
+            if (insideParentheses) {
+                parenthesesCount--;
+                expressionBuffer += char;
+                if (parenthesesCount === 0) {
+                    insideParentheses = false;
+                    numberBuffer = expressionBuffer;
+                    expressionBuffer = "";
+                }
+            } else {
+                processedInput += char;
+            }
+        } else if (insideParentheses) {
+            expressionBuffer += char;
+        } else if (!isNaN(char) || char === ".") {
+            numberBuffer += char;
+        } else if (char === "%") {
+            if (numberBuffer.startsWith("(") && numberBuffer.endsWith(")")) {
+                // Evaluate the expression inside parentheses and divide by 100
+                const value = eval(replaceOperators(numberBuffer));
+                processedInput += (value / 100).toString();
+            } else if (numberBuffer.length > 0) {
+                // Simple number percentage
+                processedInput += (parseFloat(numberBuffer) / 100).toString();
             }
             numberBuffer = "";
-        }
-        else if (operators.includes(char) || char === "(" || char === ")") {
-            if (numberBuffer) {
+        } else {
+            if (numberBuffer.length > 0) {
                 processedInput += numberBuffer;
                 numberBuffer = "";
             }
-
-            if (operators.includes(char)) processedInput += char;
-            else if (char === "(") {
-                processedInput += "(";
-                bracketsState.push(processedInput);
-                processedInput = "";
-            }
-            else {
-                processedInput += ")";
-                processedInput = bracketsState.pop() + processedInput;
-            }
+            processedInput += char;
         }
     }
 
-    if (numberBuffer) processedInput += numberBuffer;
+    if (numberBuffer.length > 0) {
+        processedInput += numberBuffer;
+    }
 
     return eval(replaceOperators(processedInput));
 };
